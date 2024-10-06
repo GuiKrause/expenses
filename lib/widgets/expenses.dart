@@ -1,3 +1,4 @@
+import 'package:expenses/widgets/chart/chart.dart';
 import 'package:expenses/widgets/expenses_list/expenses_list.dart';
 import 'package:expenses/models/expense.dart';
 import 'package:expenses/widgets/new_expense.dart';
@@ -13,10 +14,10 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses> {
   final List<Expense> _registeredExpenses = [
     Expense(
-      title: 'Mac Mini',
-      amount: 399.99,
+      title: 'Hamburguer',
+      amount: 26.99,
       date: DateTime.now(),
-      category: Category.work,
+      category: Category.food,
     ),
     Expense(
       title: 'Cinema',
@@ -29,14 +30,51 @@ class _ExpensesState extends State<Expenses> {
   void _openAddExpenseOveraly() {
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      enableDrag: false,
       builder: (ctx) {
-        return const NewExpense();
+        return NewExpense(onAddExpense: _addExpense);
       },
+    );
+  }
+
+  void _addExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.add(expense);
+    });
+  }
+
+  void _removeExpense(Expense expense) {
+    var expenseIndex = _registeredExpenses.indexOf(expense);
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text('Expense removed'),
+        action: SnackBarAction(
+          label: 'Undo',
+          onPressed: () {
+            setState(() {
+              _registeredExpenses.insert(expenseIndex, expense);
+            });
+          },
+        ),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    Widget screenContent = _registeredExpenses.isNotEmpty
+        ? ExpensesList(
+            expenses: _registeredExpenses, onRemoveExpense: _removeExpense)
+        : const Center(
+            child: Text('No expenses found, try to add some!'),
+          );
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Expense Tracker'),
@@ -50,9 +88,9 @@ class _ExpensesState extends State<Expenses> {
       body: Center(
         child: Column(
           children: [
-            const Text('Dashboard'),
+            Chart(expenses: _registeredExpenses),
             Expanded(
-              child: ExpensesList(expenses: _registeredExpenses),
+              child: screenContent,
             ),
           ],
         ),
