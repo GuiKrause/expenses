@@ -1,5 +1,6 @@
 import 'package:expenses/widgets/expenses.dart';
 import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
 
 ColorScheme kColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 190, 144, 242),
@@ -11,6 +12,11 @@ ColorScheme kDarkColorScheme = ColorScheme.fromSeed(
 );
 
 void main(List<String> args) {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  // ]).then(
+  //   (value) {
   runApp(
     MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -58,4 +64,6 @@ void main(List<String> args) {
       home: const Expenses(),
     ),
   );
+  //   },
+  // );
 }

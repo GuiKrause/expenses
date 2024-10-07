@@ -32,6 +32,7 @@ class _ExpensesState extends State<Expenses> {
       context: context,
       isScrollControlled: true,
       enableDrag: false,
+      useSafeArea: true,
       builder: (ctx) {
         return NewExpense(onAddExpense: _addExpense);
       },
@@ -68,6 +69,8 @@ class _ExpensesState extends State<Expenses> {
 
   @override
   Widget build(BuildContext context) {
+    var width = MediaQuery.of(context).size.width;
+
     Widget screenContent = _registeredExpenses.isNotEmpty
         ? ExpensesList(
             expenses: _registeredExpenses, onRemoveExpense: _removeExpense)
@@ -86,14 +89,25 @@ class _ExpensesState extends State<Expenses> {
         ],
       ),
       body: Center(
-        child: Column(
-          children: [
-            Chart(expenses: _registeredExpenses),
-            Expanded(
-              child: screenContent,
-            ),
-          ],
-        ),
+        child: width > 600
+            ? Row(
+                children: [
+                  Expanded(
+                    child: Chart(expenses: _registeredExpenses),
+                  ),
+                  Expanded(
+                    child: screenContent,
+                  ),
+                ],
+              )
+            : Column(
+                children: [
+                  Chart(expenses: _registeredExpenses),
+                  Expanded(
+                    child: screenContent,
+                  ),
+                ],
+              ),
       ),
     );
   }
